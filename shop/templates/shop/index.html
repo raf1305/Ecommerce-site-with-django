@@ -1,0 +1,139 @@
+{% extends 'shop/basic.html' %}
+{% block css %}
+      <style>
+          .col-md-3
+          {
+          display: inline-block;
+          margin-left:-4px;
+          }
+
+          .carousel-indicators .active {
+          background-color: blue;
+            }
+
+          .col-md-3 img{
+
+          width: 227px;
+          max-height: 242px;
+          }
+
+          body .carousel-indicator li{
+          background-color: blue;
+          }
+
+          body .carousel-indicators{
+          bottom: 0;
+          }
+
+          body .carousel-control-prev-icon,
+          body .carousel-control-next-icon{
+          background-color: blue;
+          }
+
+          .carousel-control-prev,
+          .carousel-control-next{
+          top: auto;
+bottom: auto;
+          }
+           body .no-padding{
+           padding-left: 0;
+           padding-right: 0;
+           }
+  </style>
+  {% endblock %}
+
+  <body>
+{% block content %}
+<div class="container">
+  {% for prod, range, slide_range in allProds %}
+  <h1>{{prod.0.category}}</h1>
+<div id="demo{{forloop.counter}}" class="carousel slide my-3" data-ride="carousel">
+    <ul class="carousel-indicators">
+            <li data-target="#demo{{forloop.counter}}" data-slide-to="0" class="active"></li>
+      {% for i in range %}
+            
+            <li data-target="#demo{{forloop.parentloop.counter}}" data-slide-to={{i}}></li>
+            
+      {% endfor %}
+    </ul>
+    <!--Slideshow starts here -->
+    <div class="container carousel-inner no-padding">
+      <div class="carousel-item active">
+        
+        {% for i in prod %}
+        <div class="col-xs-4 col-sm-3 col-md-3">
+          <div class="card" style="width: 18rem;">
+            <img src='/media/{{i.image}}' class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{i.name}}</h5>
+              <p class="card-text">{{i.description}}</p>
+              <a href="#" id="pr{{i.id}}" class="btn btn-primary cart">Add To Cart</a>
+              <a href="/shop/prodview/{{i.id}}"><button id="qv{{i.id}}" class="btn btn-primary cart">QuickView</button></a>
+            </div>
+          </div>
+        </div>
+        {% if forloop.counter|divisibleby:4 and forloop.counter > 0 and not forloop.last %}
+      </div>
+      <div class="carousel-item">
+        {% endif %}
+        
+        {% endfor %}
+      </div>
+    </div>
+    </div>
+    
+    <!-- left and right controls for the slide -->
+    <a class="carousel-control-prev" href="#demo{{forloop.counter}}" data-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </a>
+    <a class="carousel-control-next" href="#demo{{forloop.counter}}" data-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </a>
+    {% endfor %}
+  </div>
+    {% endblock %}
+
+  
+    {% block js %}
+<script>
+    console.log('working');
+    if(localStorage.getItem('cart') == null){
+    var cart = {};
+    }
+    else
+    {
+    cart = JSON.parse(localStorage.getItem('cart'));
+    total_items=0;
+    for (const [key, value] of Object.entries(cart)) {
+        total_items=total_items+parseInt(`${value}`);
+        // console.log(`${key}: ${value}`);
+    }
+    document.getElementById('cart').innerHTML = total_items;
+    }
+    $('.cart').click(function(){
+    console.log('clicked');
+    var idstr = this.id.toString();
+    console.log(idstr);
+    if (cart[idstr] !=undefined){
+    cart[idstr] = cart[idstr] + 1;
+    }
+    else
+    {
+    cart[idstr] = 1;
+    }
+    console.log(cart);
+    // console.log(typeof(cart));
+    localStorage.setItem('cart', JSON.stringify(cart));
+    total_items=0;
+    for (const [key, value] of Object.entries(cart)) {
+        total_items=total_items+parseInt(`${value}`);
+        // console.log(`${key}: ${value}`);
+    }
+    console.log(total_items)
+    document.getElementById('cart').innerHTML =total_items;
+    });
+</script>
+    {% endblock %}
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
